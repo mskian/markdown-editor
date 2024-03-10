@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="HandheldFriendly" content="True" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#c7ecee">
+<link rel="shortcut icon" href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAA7EAAAOxAGVKw4bAAABqklEQVQ4jZ2Tv0scURDHP7P7SGWh14mkuXJZEH8cgqUWcklAsLBbCEEJSprkD7hD/4BUISHEkMBBiivs5LhCwRQBuWgQji2vT7NeYeF7GxwLd7nl4knMwMDMfL8z876P94TMLt+8D0U0EggQSsAjwMvga8ChJAqxqjTG3m53AQTg4tXHDRH9ABj+zf6oytbEu5d78nvzcyiivx7QXBwy46XOi5z1jbM+Be+nqVfP8yzuD3FM6rzIs9YE1hqGvDf15cVunmdx7w5eYJw1pcGptC9CD4gBUuef5Ujq/BhAlTLIeFYuyfmTZgeYv+2nPt1a371P+Hm1WUPYydKf0lnePwVmh3hnlcO1uc7yvgJUDtdG8oy98kduK2KjeHI0fzCQINSXOk/vlXBUOaihAwnGWd8V5r1uhe1VIK52V6JW2D4FqHZX5lphuwEE7ooyaN7gjLMmKSwYL+pMnV+MA/6+g8RYa2Lg2RBQbj4+rll7uymLy3coiuXb5PdQVf7rKYvojAB8Lf3YUJUHfSYR3XqeLO5JXvk0dhKqSqQQoCO+s5AIxCLa2Lxc6ALcAPwS26XFskWbAAAAAElFTkSuQmCC" />
+
+<title>Real-time Markdown Editor</title>
+<meta name="description" content="Real-time Markdown Editor - Enter Markdown Input and Preview in Real-time."/>
+
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css" integrity="sha512-IgmDkwzs96t4SrChW29No3NXBIBv8baW490zk5aXvhCD8vuZM3yUSkbyTBcXohkySecyzIrUwiF/qV0cuPcL3Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.css" integrity="sha256-Is0XNfNX8KF/70J2nv8Qe6BWyiXrtFxKfJBHoDgNAEM=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css" integrity="sha512-mtXspRdOWHCYp+f4c7CkWGYPPRAhq9X+xCvJMUBVAb6pqA4U8pxhT3RWT3LP3bKbiolYL2CkL1bSKZZO4eeTew==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+
+<style>
+html, body {
+    min-height: 100vh;
+}
+body {
+  font-family: "Roboto Mono", monospace;
+  background-color: #FDA7DF;
+  padding-bottom: 20px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.markdown-container {
+  font-family: "Roboto Mono", monospace;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 1px 0;
+}
+
+.markdown-input,
+.markdown-preview {
+  font-family: "Roboto Mono", monospace;
+  flex: 1;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 10px;
+}
+
+.markdown-input {
+  font-family: "Roboto Mono", monospace;
+  background-color: #f9f9f9;
+}
+
+.markdown-preview {
+  font-family: "Roboto Mono", monospace;
+  background-color: #fff;
+}
+
+.markdown-input textarea {
+  font-family: "Roboto Mono", monospace;
+  width: 100%;
+  height: 300px;
+  border: none;
+  resize: vertical;
+}
+
+.error-message {
+  font-family: "Roboto Mono", monospace;
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+button {
+  font-family: "Roboto Mono", monospace;
+  font-weight: 700;
+}
+.markdown-preview pre {
+  background-color: transparent !important;
+}
+.markdown-container {
+    flex-direction: column;
+    align-items: stretch;
+    align-items: center;
+    justify-content: center;
+  }
+  .markdown-input,
+  .markdown-preview {
+    width: 70%;
+    margin: 10px 0;
+  }
+@media screen and (max-width: 768px) {
+  .markdown-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .markdown-input,
+  .markdown-preview {
+    width: 100%;
+    margin: 10px 0;
+  }
+}
+</style>
+</head>
+<body>
+
+<section class="section">
+<div class="container">
+  <div class="markdown-container">
+    <div class="markdown-input">
+      <label for="markdown-input" class="label">Markdown Input</label>
+      <div class="control">
+        <textarea id="markdown-input" class="textarea" placeholder="Enter Markdown here..." aria-label="Markdown Input"></textarea>
+      </div>
+      <br>
+      <button id="download-markdown" class="button is-warning is-rounded" disabled>Download (.md)</button>
+      <br>
+    </div>
+    <div class="markdown-preview">
+      <label class="label">Markdown Preview</label>
+      <hr>
+      <div class="content" id="markdown-preview" aria-live="polite" aria-atomic="true" role="region"></div>
+      <br>
+    </div>
+  </div>
+  <div id="error-message" class="error-message is-hidden" role="alert"></div>
+</div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" integrity="sha384-3zf4Pen4fXU90jGg3cxmo7BF4dq8HMtF2s07c/Hhd1Fh+Encm6ApPvNm8vrMJbWu" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.js" integrity="sha256-6sZs7OGP0Uzcl7UDsLaNsy1K0KTZx1+6yEVrRJMn2IM=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.9/dist/purify.min.js" integrity="sha256-o4dmiN/9oJkRdegv9EfbqViVvMcC9TiNBP+qYkD0OrI=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+
+const canonicalLink = document.createElement('link');
+canonicalLink.rel = 'canonical';
+canonicalLink.href = window.location.href;
+document.head.appendChild(canonicalLink);
+
+document.addEventListener('DOMContentLoaded', function() {
+  const markdownInput = new SimpleMDE({
+    element: document.getElementById('markdown-input'),
+    autofocus: true,
+    spellChecker: false,
+    toolbar: [
+      {
+        name: "bold",
+        action: SimpleMDE.toggleBold,
+        className: "fa fa-bold",
+        title: "Bold"
+      },
+      {
+        name: "italic",
+        action: SimpleMDE.toggleItalic,
+        className: "fa fa-italic",
+        title: "Italic"
+      },
+      {
+        name: "heading",
+        action: SimpleMDE.toggleHeadingSmaller,
+        className: "fa fa-header",
+        title: "Heading"
+      },
+      "|",
+      {
+        name: "quote",
+        action: SimpleMDE.toggleBlockquote,
+        className: "fa fa-quote-left",
+        title: "Quote"
+      },
+      {
+        name: "unordered-list",
+        action: SimpleMDE.toggleUnorderedList,
+        className: "fa fa-list-ul",
+        title: "Unordered List"
+      },
+      {
+        name: "ordered-list",
+        action: SimpleMDE.toggleOrderedList,
+        className: "fa fa-list-ol",
+        title: "Ordered List"
+      },
+      "|",
+      {
+        name: "link",
+        action: SimpleMDE.drawLink,
+        className: "fa fa-link",
+        title: "Link"
+      },
+      {
+        name: "image",
+        action: SimpleMDE.drawImage,
+        className: "fa fa-picture-o",
+        title: "Image"
+      },
+      "|",
+      {
+        name: "code",
+        action: SimpleMDE.toggleCodeBlock,
+        className: "fa fa-code",
+        title: "Code"
+      },
+      {
+        name: "horizontal-rule",
+        action: SimpleMDE.drawHorizontalRule,
+        className: "fa fa-minus",
+        title: "Horizontal Rule"
+      },
+      {
+        name: "table",
+        action: SimpleMDE.drawTable,
+        className: "fa fa-table",
+        title: "Table"
+      },
+      "|",
+      {
+        name: "preview",
+        action: SimpleMDE.togglePreview,
+        className: "fa fa-eye no-disable",
+        title: "Preview"
+      },
+      {
+        name: "side-by-side",
+        action: SimpleMDE.toggleSideBySide,
+        className: "fa fa-columns no-disable",
+        title: "Side by Side"
+      },
+      {
+        name: "fullscreen",
+        action: SimpleMDE.toggleFullScreen,
+        className: "fa fa-arrows-alt no-disable",
+        title: "Fullscreen"
+      }
+    ]
+  });
+
+  const markdownPreview = document.getElementById('markdown-preview');
+  const errorMessage = document.getElementById('error-message');
+
+  const downloadButton = document.getElementById('download-markdown');
+
+  markdownInput.codemirror.on('change', function() {
+    const markdownText = markdownInput.value();
+    localStorage.setItem('markdownInput', markdownText);
+    updateMarkdownPreview(markdownText);
+    updateDownloadButton(markdownText);
+  });
+
+  function updateDownloadButton(markdownText) {
+    if (markdownText.trim().length > 0) {
+      downloadButton.disabled = false;
+    } else {
+      downloadButton.disabled = true;
+    }
+  }
+
+  document.getElementById('download-markdown').addEventListener('click', function() {
+    const markdownText = markdownInput.value();
+    const blob = new Blob([markdownText], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const timestamp = new Date().getTime();
+    a.href = url;
+    a.download = `markdown-${timestamp}.md`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  });
+
+  const savedMarkdown = localStorage.getItem('markdownInput');
+  if (savedMarkdown) {
+    markdownInput.value(savedMarkdown);
+    updateMarkdownPreview(savedMarkdown);
+    updateDownloadButton(savedMarkdown);
+  }
+  
+  function updateMarkdownPreview(markdownText) {
+    try {
+      const sanitizedHtml = DOMPurify.sanitize(marked.parse(markdownText));
+      markdownPreview.innerHTML = sanitizedHtml;
+      errorMessage.classList.add('is-hidden');
+      highlightCodeBlocks();
+    } catch (error) {
+      errorMessage.textContent = "Error parsing Markdown: " + error.message;
+      errorMessage.classList.remove('is-hidden');
+    }
+  }
+});
+
+function highlightCodeBlocks() {
+   const markdownPreview = document.getElementById('markdown-preview');
+    markdownPreview.querySelectorAll('pre code').forEach((codeBlock) => {
+      hljs.highlightBlock(codeBlock);
+    });
+}
+
+</script>
+</body>
+</html>
